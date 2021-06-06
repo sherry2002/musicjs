@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>music player</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" integrity="sha512-PgQMlq+nqFLV4ylk1gwUOgm6CtIIXkKwaIHp/PAIWHzig/lKZSEGKEysh0TCVbHJXCLN7WetD8TFecIky75ZfQ==" crossorigin="anonymous" />
+</head>
+<body>
+    
+<div class="main_div">
+<div class="music_container">
+    <h2 id="title">LOTUS LANE</h2>
+    <h3 id="artist">The Loyalist</h3>
+    <div class="imagecontainer">
+        <img src="images/1.jpg" alt="">
+    </div>
+<audio src="music/1.mp3" ></audio>
+
+<div class="progress_bar" id="progress_container">
+    <div class="progress_duration">
+        <div class="current_time" id="current_time">0.00</div>
+        <div class="duration" id="duration">2.44</div>
+    </div>
+        <div class="progress_div" id ="progress_div">
+            <div class="progress" id="progress"></div>
+        </div>
+
+    
+</div>
+
+<div class="musiccontrol">
+    <i class="fas fa-backward" id="prev" title="prev"></i>
+    
+    <i class="fas fa-play main_button" id="play" title="play"></i>
+    
+    <i class="fas fa-forward" id="next" title="next"></i>
+
+</div>
+</div>
+
+</div>
+<script>
+    const music = document.querySelector("audio");
+    const img = document.querySelector("img");
+    const play = document.getElementById("play");
+    const artist = document.getElementById("artist");
+    const title = document.getElementById("title");
+    const prev = document.getElementById("prev");
+    const next = document.getElementById("next");
+    let total_duration = document.getElementById("duration");
+    const current_time = document.getElementById("current_time");
+    let progress = document.getElementById('progress');
+    const progress_div = document.getElementById('progress_div');
+const  songs= [{
+
+name : "1",
+title : "beliver",
+artist : "imagine dragon",
+
+},
+{
+    name : "2",
+title : "bekhayali",
+artist : "arijit",
+},
+{
+    name : "3",
+title : "dil ka darya",
+artist : "arijit",
+},
+{
+    name : "4",
+title : "luka chuppi",
+artist : "akil",
+},
+{
+    name : "5",
+title : "teriyan",
+artist : "azim & aima",
+},
+];
+
+
+    let isPlaying= false; 
+         
+   const playMusic = ()=>{
+    loadSong(songs[sondIndex]);
+       isPlaying=true;
+music.play();
+play.classList.replace("fa-play","fa-pause");
+img.classList.add("animated");
+
+   };
+//    for pause
+   const pauseMusic = ()=>{
+    loadSong(songs[sondIndex]);
+       isPlaying=false;
+music.pause();
+play.classList.replace("fa-pause","fa-play");
+img.classList.remove("animated");
+   };
+   play.addEventListener("click",()=>{
+       if (isPlaying){
+           pauseMusic();
+       }
+       else{
+           playMusic();
+       }
+//isPlaying ? pauseMusic() : playMusic();
+
+
+   });
+   const loadSong = (songs) =>{
+                title.textContent = songs.title;
+                artist.textContent=songs.artist;
+                music.src = "music/"+songs.name+".mp3"
+                img.src = "images/"+songs.name+".jpg"
+
+            };
+
+
+//loadSong(songs[2]);
+sondIndex=0;
+const nextSong = () => {
+    sondIndex = (sondIndex + 1)% songs.length;
+    loadSong(songs[sondIndex]);
+    playMusic();
+}
+const prevSong = () => {
+    sondIndex = (sondIndex - 1+songs.length)% songs.length;
+    loadSong(songs[sondIndex]);
+    playMusic();
+}
+music.addEventListener('timeupdate',(event) => {
+     const {currentTime,duration } = event.srcElement;
+    //  console.log(currentTime);
+    //  console.log(duration);
+
+     let progress_time=(currentTime/duration)*100;
+      progress.style.width=`${progress_time}%`;
+
+// music update
+      let min_duration= Math.floor(duration / 60);
+      let sec_duration = Math.floor(duration % 60);
+      let  tot_duration = `${min_duration}:${sec_duration} `;
+       // total_duration.textContent = `${tot_duration}`;  
+      if(duration){
+        total_duration.textContent= `${tot_duration}`;
+      }
+
+    //     let  min_currentTime= Math.floor(current_time / 60);
+    //   let  sec_currentTime = Math.floor(current_time % 60);
+    //   let  tot_currentTime = `${min_currentTime}:${sec_currentTime} `;
+    //      // current_time.textContent = `${tot_currentTime}`;
+    //   if(sec_currentTime<10){
+    //     sec_currentTime.textContent = `${sec_currentTime}`
+
+    //     let  tot_currentTime = `${min_currentTime}:${sec_currentTime} `;
+    //   }
+
+    //   current_time.textContent= `${tot_currentTime}`;  
+    let min_currentTime= Math.floor(currentTime / 60);
+      let sec_currentTime = Math.floor(currentTime % 60);
+      
+       if(sec_currentTime<10){
+        sec_currentTime= `0${sec_currentTime}`
+    }
+        let  tot_currentTime = `${min_currentTime}:${sec_currentTime} `;
+        current_time.textContent = `${tot_currentTime}`; 
+
+});
+progress_div.addEventListener('click',(event) =>{
+    const { duration } = music;
+   
+  
+    let move_progress = (event.offsetX/event.srcElement.clientWidth)*duration;
+       music.currentTime = move_progress;
+// console.log(event);      
+
+});
+
+ 
+music.addEventListener("ended",nextSong);
+
+next.addEventListener("click", nextSong);
+prev.addEventListener("click", prevSong);
+
+
+
+
+
+
+</script>
+
+</body>
+</html>
